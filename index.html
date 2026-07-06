@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>ระบบสมัครแข่งขัน กิจกรรมสัปดาห์วันวิทยาศาสตร์</title>
+  <title>ระบบสมัครแข่งขันสัปดาห์วันวิทยาศาสตร์</title>
 
   <style>
     * {
@@ -12,18 +12,36 @@
       font-family: "Prompt", "Sarabun", "Noto Sans Thai", sans-serif;
     }
 
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --secondary: #2563eb;
+      --accent: #7c3aed;
+      --text: #0f172a;
+      --muted: #64748b;
+      --card: rgba(255,255,255,0.94);
+      --border: #e2e8f0;
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --error-bg: #fee2e2;
+      --error-text: #991b1b;
+      --warning-bg: #fff7ed;
+      --warning-text: #7c2d12;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
+      color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(20,184,166,0.18), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(59,130,246,0.18), transparent 30%),
-        linear-gradient(135deg, #eef7ff, #f8fff4);
-      color: #1f2937;
+        radial-gradient(circle at top left, rgba(20,184,166,0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(124,58,237,0.13), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(37,99,235,0.15), transparent 32%),
+        linear-gradient(135deg, #ecfeff, #f8fafc 45%, #f5f3ff);
     }
 
     .container {
-      max-width: 1120px;
+      max-width: 1180px;
       margin: auto;
       padding: 24px;
     }
@@ -31,66 +49,111 @@
     .hero {
       position: relative;
       overflow: hidden;
-      background: linear-gradient(135deg, #0f766e, #2563eb);
+      background: linear-gradient(135deg, rgba(15,118,110,0.96), rgba(37,99,235,0.96));
       color: white;
-      border-radius: 28px;
-      padding: 34px;
+      border-radius: 32px;
+      padding: 34px 26px 38px;
       margin-bottom: 24px;
-      box-shadow: 0 18px 40px rgba(15, 118, 110, 0.24);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+      text-align: center;
     }
 
-    .hero::after {
+    .hero::before {
       content: "";
       position: absolute;
-      width: 220px;
-      height: 220px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.12);
-      right: -70px;
-      top: -70px;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,255,255,0.22), transparent 18%),
+        radial-gradient(circle at 90% 20%, rgba(255,255,255,0.12), transparent 20%),
+        radial-gradient(circle at 50% 110%, rgba(255,255,255,0.16), transparent 28%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-slot {
+      width: 108px;
+      height: 108px;
+      margin: 0 auto 16px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.32);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .logo-slot img {
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+      padding: 10px;
+      display: none;
+    }
+
+    .logo-placeholder {
+      color: rgba(255,255,255,0.86);
+      font-size: 13px;
+      line-height: 1.35;
+      padding: 10px;
     }
 
     .hero-badge {
       display: inline-block;
-      padding: 8px 14px;
+      padding: 8px 16px;
       border-radius: 999px;
       background: rgba(255,255,255,0.18);
       margin-bottom: 14px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 0.3px;
     }
 
     .hero h1 {
       margin: 0 0 10px;
-      font-size: 32px;
-      line-height: 1.35;
+      font-size: clamp(26px, 4vw, 40px);
+      line-height: 1.3;
     }
 
     .hero p {
-      margin: 0;
+      margin: 0 auto;
+      max-width: 760px;
       opacity: 0.95;
-      line-height: 1.7;
+      line-height: 1.8;
+      font-size: 16px;
     }
 
     .card {
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(10px);
-      border-radius: 24px;
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border-radius: 26px;
       padding: 24px;
       margin-bottom: 24px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.08);
       border: 1px solid rgba(226,232,240,0.9);
     }
 
-    h2 {
-      margin-top: 0;
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
       margin-bottom: 16px;
-      color: #0f766e;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--primary);
       font-size: 24px;
     }
 
     h3 {
-      color: #1d4ed8;
+      color: var(--secondary);
       margin-bottom: 8px;
     }
 
@@ -103,7 +166,7 @@
     label {
       display: block;
       margin-top: 14px;
-      font-weight: 700;
+      font-weight: 800;
       color: #334155;
     }
 
@@ -113,7 +176,7 @@
       padding: 13px 14px;
       margin-top: 7px;
       border: 1px solid #cbd5e1;
-      border-radius: 14px;
+      border-radius: 15px;
       font-size: 16px;
       background: white;
       transition: 0.2s;
@@ -122,7 +185,7 @@
     input:focus,
     select:focus {
       outline: none;
-      border-color: #0f766e;
+      border-color: var(--primary);
       box-shadow: 0 0 0 4px rgba(15,118,110,0.14);
     }
 
@@ -135,27 +198,38 @@
     .info-box {
       margin-top: 16px;
       background: #f0fdfa;
-      border-left: 5px solid #0f766e;
-      padding: 15px;
-      border-radius: 14px;
-      line-height: 1.7;
+      border-left: 5px solid var(--primary);
+      padding: 16px;
+      border-radius: 16px;
+      line-height: 1.75;
     }
 
     .warning-box {
       margin-top: 16px;
-      background: #fff7ed;
+      background: var(--warning-bg);
       border-left: 5px solid #f97316;
-      padding: 15px;
-      border-radius: 14px;
-      line-height: 1.7;
-      color: #7c2d12;
+      padding: 16px;
+      border-radius: 16px;
+      line-height: 1.75;
+      color: var(--warning-text);
+    }
+
+    .team-auto-box {
+      margin-top: 16px;
+      background: #eff6ff;
+      border-left: 5px solid var(--secondary);
+      padding: 16px;
+      border-radius: 16px;
+      line-height: 1.75;
+      color: #1e3a8a;
+      display: none;
     }
 
     .fashion-only-box {
       display: none;
       margin-top: 18px;
-      padding: 22px;
-      border-radius: 20px;
+      padding: 24px;
+      border-radius: 24px;
       background: linear-gradient(135deg, #faf5ff, #eff6ff);
       border: 1px solid #ddd6fe;
       text-align: center;
@@ -188,8 +262,8 @@
       align-items: center;
       padding: 10px;
       background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
     }
 
     .student-row input {
@@ -199,11 +273,11 @@
 
     button {
       border: none;
-      border-radius: 14px;
+      border-radius: 15px;
       padding: 12px 18px;
       font-size: 16px;
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 800;
       transition: 0.2s;
       white-space: nowrap;
     }
@@ -224,15 +298,15 @@
     }
 
     .btn-primary {
-      background: #0f766e;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
-      box-shadow: 0 8px 18px rgba(15,118,110,0.22);
+      box-shadow: 0 10px 22px rgba(15,118,110,0.22);
     }
 
     .btn-secondary {
-      background: #2563eb;
+      background: linear-gradient(135deg, var(--secondary), #1d4ed8);
       color: white;
-      box-shadow: 0 8px 18px rgba(37,99,235,0.20);
+      box-shadow: 0 10px 22px rgba(37,99,235,0.20);
     }
 
     .btn-remove {
@@ -246,39 +320,39 @@
     }
 
     .btn-fashion {
-      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
       color: white;
       margin-top: 16px;
       font-size: 17px;
       padding: 14px 24px;
-      box-shadow: 0 10px 24px rgba(124,58,237,0.25);
+      box-shadow: 0 12px 28px rgba(124,58,237,0.25);
     }
 
     .actions {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-top: 22px;
+      margin-top: 24px;
     }
 
     .message {
       margin-top: 18px;
       padding: 15px;
-      border-radius: 14px;
+      border-radius: 15px;
       display: none;
       line-height: 1.6;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .success {
-      background: #dcfce7;
-      color: #166534;
+      background: var(--success-bg);
+      color: var(--success-text);
       border: 1px solid #86efac;
     }
 
     .error {
-      background: #fee2e2;
-      color: #991b1b;
+      background: var(--error-bg);
+      color: var(--error-text);
       border: 1px solid #fecaca;
     }
 
@@ -286,6 +360,7 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      margin-top: 18px;
       margin-bottom: 14px;
     }
 
@@ -299,22 +374,22 @@
 
     .summary-card {
       background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
       padding: 16px;
     }
 
     .summary-card strong {
       display: block;
       font-size: 24px;
-      color: #0f766e;
+      color: var(--primary);
       margin-bottom: 4px;
     }
 
     .table-wrap {
       overflow-x: auto;
       margin-top: 12px;
-      border-radius: 16px;
+      border-radius: 18px;
       border: 1px solid #e5e7eb;
     }
 
@@ -329,14 +404,14 @@
     th,
     td {
       border-bottom: 1px solid #e5e7eb;
-      padding: 11px;
+      padding: 12px;
       text-align: left;
       vertical-align: top;
       line-height: 1.5;
     }
 
     th {
-      background: #0f766e;
+      background: var(--primary);
       color: white;
       position: sticky;
       top: 0;
@@ -346,17 +421,96 @@
       background: #f8fafc;
     }
 
-    .report-section {
-      margin-top: 26px;
-      padding-top: 16px;
-      border-top: 1px dashed #cbd5e1;
-    }
-
     .small-note {
       margin-top: 8px;
       font-size: 14px;
-      color: #64748b;
+      color: var(--muted);
       line-height: 1.6;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 9999;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(560px, 100%);
+      background: rgba(255,255,255,0.98);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+      border: 1px solid rgba(226,232,240,0.95);
+      animation: modalIn 0.18s ease-out;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: #fff7ed;
+      color: #ea580c;
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    .modal-card h3 {
+      margin: 0 0 10px;
+      color: #0f172a;
+      font-size: 22px;
+      line-height: 1.4;
+    }
+
+    .modal-card p {
+      margin: 0;
+      color: #475569;
+      line-height: 1.75;
+      white-space: pre-line;
+    }
+
+    .modal-detail {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      line-height: 1.75;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    .modal-actions button {
+      min-width: 120px;
     }
 
     @media (max-width: 760px) {
@@ -365,11 +519,7 @@
       }
 
       .hero {
-        padding: 24px;
-      }
-
-      .hero h1 {
-        font-size: 24px;
+        padding: 24px 18px 28px;
       }
 
       .grid {
@@ -394,7 +544,8 @@
 
       .actions,
       .student-toolbar,
-      .report-toolbar {
+      .report-toolbar,
+      .modal-actions {
         flex-direction: column;
       }
     }
@@ -405,16 +556,27 @@
   <div class="container">
 
     <div class="hero">
-      <div class="hero-badge">SCIENCE WEEK REGISTRATION SYSTEM</div>
-      <h1>ระบบสมัครแข่งขัน กิจกรรมสัปดาห์วันวิทยาศาสตร์</h1>
-      <p>
-        ระบบรับสมัครกิจกรรมการแข่งขันทางวิทยาศาสตร์ ภายใต้แนวคิด
-        <strong>Ancient Jurassic</strong> สำหรับบันทึกข้อมูลผู้สมัครแบบรายบุคคล รายทีมและรายงานผลการสมัคร
-      </p>
+      <div class="hero-content">
+        <div class="logo-slot">
+          <img id="schoolLogo" alt="โลโกโรงเรียน" />
+          <div id="logoPlaceholder" class="logo-placeholder">
+            พื้นที่<br>โลโกโรงเรียน
+          </div>
+        </div>
+
+        <div class="hero-badge">SCIENCE WEEK REGISTRATION SYSTEM</div>
+        <h1>ระบบสมัครแข่งขันสัปดาห์วันวิทยาศาสตร์</h1>
+        <p>
+          ระบบรับสมัครกิจกรรมการแข่งขันทางวิทยาศาสตร์ ภายใต้แนวคิด
+          <strong>Ancient Jurassic</strong>
+        </p>
+      </div>
     </div>
 
     <div class="card">
-      <h2>แบบฟอร์มสมัครแข่งขัน</h2>
+      <div class="card-title">
+        <h2>แบบฟอร์มสมัครการแข่งขัน</h2>
+      </div>
 
       <label for="competition">เลือกรายการแข่งขัน</label>
       <select id="competition" onchange="onCompetitionChange()">
@@ -436,7 +598,7 @@
       <div id="mainRegisterForm">
 
         <label for="level">ระดับการแข่งขัน</label>
-        <select id="level">
+        <select id="level" onchange="onLevelChange()">
           <option value="">-- กรุณาเลือกรายการแข่งขันก่อน --</option>
         </select>
 
@@ -444,28 +606,14 @@
           <div>
             <label for="grade">ชั้นมัธยมศึกษาปีที่</label>
             <select id="grade">
-              <option value="">-- เลือกระดับชั้น --</option>
-              <option value="ม.1">ม.1</option>
-              <option value="ม.2">ม.2</option>
-              <option value="ม.3">ม.3</option>
-              <option value="ม.4">ม.4</option>
-              <option value="ม.5">ม.5</option>
-              <option value="ม.6">ม.6</option>
+              <option value="">-- กรุณาเลือกระดับการแข่งขันก่อน --</option>
             </select>
           </div>
 
           <div>
             <label for="room">ห้องเรียน</label>
             <select id="room">
-              <option value="">-- เลือกห้องเรียน --</option>
-              <option value="1">ห้อง 1</option>
-              <option value="2">ห้อง 2</option>
-              <option value="3">ห้อง 3</option>
-              <option value="4">ห้อง 4</option>
-              <option value="5">ห้อง 5</option>
-              <option value="6">ห้อง 6</option>
-              <option value="7">ห้อง 7</option>
-              <option value="8">ห้อง 8</option>
+              <option value="">-- กรุณาเลือกระดับการแข่งขันก่อน --</option>
             </select>
           </div>
         </div>
@@ -474,21 +622,8 @@
           กรุณาเลือกรายการแข่งขัน ระบบจะแสดงจำนวนช่องกรอกชื่อผู้สมัครตามเงื่อนไขของรายการนั้น
         </div>
 
-        <div id="teamNameBox" style="display:none;">
-          <div class="section-title">
-            <h2>ข้อมูลทีม</h2>
-          </div>
-
-          <label for="teamName">ชื่อทีม</label>
-          <input
-            type="text"
-            id="teamName"
-            placeholder="ระบุชื่อทีม เช่น Jurassic Explorer"
-          />
-
-          <p class="small-note">
-            หมายเหตุ: ช่องชื่อทีมจะแสดงเฉพาะรายการแข่งขันประเภททีม
-          </p>
+        <div id="teamAutoBox" class="team-auto-box">
+          กรณีสมัครเป็นทีม ระบบจะจัดลำดับหมายเลขทีมตามรายการแข่งขัน ชั้น และห้องเรียน
         </div>
 
         <div class="section-title">
@@ -506,18 +641,8 @@
         <div id="studentList"></div>
 
         <p class="small-note">
-          หมายเหตุ: กรุณาระบุคำนำหน้า ชื่อ และนามสกุลให้ครบถ้วน เช่น นายธนกฤต ใจดี
+          กรุณาระบุคำนำหน้า ชื่อ และนามสกุลให้ครบถ้วน
         </p>
-
-        <div class="section-title">
-          <h2>ข้อมูลครูที่ปรึกษา</h2>
-        </div>
-
-        <label for="advisor1">ชื่อ-นามสกุล ครูที่ปรึกษา 1</label>
-        <input type="text" id="advisor1" placeholder="ระบุชื่อ-นามสกุลครูที่ปรึกษา 1" />
-
-        <label for="advisor2">ชื่อ-นามสกุล ครูที่ปรึกษา 2 ถ้ามี</label>
-        <input type="text" id="advisor2" placeholder="ระบุชื่อ-นามสกุลครูที่ปรึกษา 2" />
 
         <div class="actions">
           <button class="btn-primary" id="submitBtn" type="button" onclick="submitForm()">
@@ -527,16 +652,16 @@
             ล้างข้อมูล
           </button>
         </div>
-        <p class="small-note">
-          หมายเหตุ: หาก "บันทึกข้อมูลแล้ว Error ให้ตรวจสอบข้อมูลในส่วน "รายงานผลการสมัคร" ก่อน ทำการสมัครใหม่
-        </p>
+
       </div>
 
       <div id="message" class="message"></div>
     </div>
 
     <div class="card">
-      <h2>รายงานผลการสมัคร</h2>
+      <div class="card-title">
+        <h2>รายงานผลการสมัครสำหรับผู้ดูแลระบบ</h2>
+      </div>
 
       <div class="grid">
         <div>
@@ -557,7 +682,7 @@
         </div>
       </div>
 
-      <div class="report-toolbar" style="margin-top:18px;">
+      <div class="report-toolbar">
         <button class="btn-secondary" type="button" onclick="loadAdminReport()">
           แสดงรายงาน
         </button>
@@ -569,18 +694,32 @@
 
       <div id="report"></div>
     </div>
+  </div>
 
+  <div id="confirmModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-icon">!</div>
+      <h3 id="modalTitle">ยืนยันการสมัคร</h3>
+      <p id="modalMessage"></p>
+      <div id="modalDetail" class="modal-detail"></div>
+      <div class="modal-actions">
+        <button id="modalCancelBtn" class="btn-light" type="button">กลับไปแก้ไข</button>
+        <button id="modalConfirmBtn" class="btn-primary" type="button">ยืนยันสมัคร</button>
+      </div>
+    </div>
   </div>
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbwNbDtuOX5ZUOatEStYE0Kam6EEBB7YWRi82OQhBwsWc5fQzzQ7EsWn-W-d4v4JCtQl/exec';
+
+    const SCHOOL_LOGO_URL = 'https://lh3.googleusercontent.com/d/18pdbdUQk06D4LihDnzOFREHbEODTd9PX';
 
     const FASHION_LINK = 'https://snsikharin-prog.github.io/lka-recycled-costum/';
 
     const competitions = [
       {
         id: 'rubik',
-        name: 'การแข่งขันรูบิค (ประเภท 3x3x3 บิดเร็ว)',
+        name: 'การแข่งขันรูบิค (ประเภท 3x3x3) บิดเร็ว',
         categoryType: 'ประเภทเดี่ยว',
         rule: 'อย่างน้อยห้องเรียนละ 1 ทีม',
         memberMin: 1,
@@ -634,7 +773,7 @@
       },
       {
         id: 'bottle-garden',
-        name: 'การแข่งขันจัดสวนขวด “ย้อนรอยดึกดำบรรพ์”',
+        name: 'การแข่งขันจัดสวนขวด ( “ย้อนรอยดึกดำบรรพ์” )',
         categoryType: 'ประเภททีม',
         rule: 'ทีมละ 2 คน ส่งอย่างน้อยห้องละ 1 ทีม',
         memberMin: 2,
@@ -670,7 +809,7 @@
       },
       {
         id: 'recycled-costume',
-        name: 'การแข่งขันแฟชั่น (“The Art of Recycled Costumes”)',
+        name: 'การแข่งขันแฟชั่น “The Art of Recycled Costumes”',
         categoryType: 'ประเภทเดี่ยว',
         rule: 'รายการนี้มีระบบรับสมัครแยกต่างหาก',
         memberMin: 1,
@@ -690,6 +829,8 @@
     ];
 
     function init() {
+      setupLogo();
+
       const competitionSelect = document.getElementById('competition');
       const reportCompetitionSelect = document.getElementById('reportCompetition');
 
@@ -707,13 +848,88 @@
         }
       });
 
+      setGradeOptions([]);
+      setRoomOptions([]);
       renderStudentFields(1);
       updateStudentButtons();
+    }
+
+    function setupLogo() {
+      const logo = document.getElementById('schoolLogo');
+      const placeholder = document.getElementById('logoPlaceholder');
+
+      if (
+        SCHOOL_LOGO_URL &&
+        SCHOOL_LOGO_URL !== 'ใส่ลิงก์โลโกโรงเรียนตรงนี้'
+      ) {
+        logo.src = SCHOOL_LOGO_URL;
+        logo.style.display = 'block';
+        placeholder.style.display = 'none';
+      }
     }
 
     function getSelectedCompetition() {
       const id = document.getElementById('competition').value;
       return competitions.find(item => item.id === id);
+    }
+
+    function setGradeOptions(grades) {
+      const gradeSelect = document.getElementById('grade');
+      gradeSelect.innerHTML = '';
+
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = grades.length ? '-- เลือกระดับชั้น --' : '-- กรุณาเลือกระดับการแข่งขันก่อน --';
+      gradeSelect.appendChild(defaultOption);
+
+      grades.forEach(grade => {
+        const option = document.createElement('option');
+        option.value = grade;
+        option.textContent = grade;
+        gradeSelect.appendChild(option);
+      });
+    }
+
+    function setRoomOptions(rooms) {
+      const roomSelect = document.getElementById('room');
+      roomSelect.innerHTML = '';
+
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = rooms.length ? '-- เลือกห้องเรียน --' : '-- กรุณาเลือกระดับการแข่งขันก่อน --';
+      roomSelect.appendChild(defaultOption);
+
+      rooms.forEach(room => {
+        const option = document.createElement('option');
+        option.value = String(room);
+        option.textContent = `ห้อง ${room}`;
+        roomSelect.appendChild(option);
+      });
+    }
+
+    function onLevelChange() {
+      const level = document.getElementById('level').value;
+
+      if (level.includes('ม.ต้น')) {
+        setGradeOptions(['ม.1', 'ม.2', 'ม.3']);
+        setRoomOptions([1, 2, 3, 4, 5, 6, 7, 8]);
+        return;
+      }
+
+      if (level.includes('ม.ปลาย')) {
+        setGradeOptions(['ม.4', 'ม.5', 'ม.6']);
+        setRoomOptions([1, 2, 3, 4]);
+        return;
+      }
+
+      if (level.includes('รวมทุกระดับชั้น')) {
+        setGradeOptions(['ม.1', 'ม.2', 'ม.3', 'ม.4', 'ม.5', 'ม.6']);
+        setRoomOptions([1, 2, 3, 4, 5, 6, 7, 8]);
+        return;
+      }
+
+      setGradeOptions([]);
+      setRoomOptions([]);
     }
 
     function onCompetitionChange() {
@@ -723,21 +939,21 @@
       const fashionOnlyBox = document.getElementById('fashionOnlyBox');
       const mainRegisterForm = document.getElementById('mainRegisterForm');
       const teamNotice = document.getElementById('teamNotice');
-      const teamNameBox = document.getElementById('teamNameBox');
-      const teamNameInput = document.getElementById('teamName');
+      const teamAutoBox = document.getElementById('teamAutoBox');
 
       levelSelect.innerHTML = '';
+      setGradeOptions([]);
+      setRoomOptions([]);
 
       if (!item) {
         levelSelect.innerHTML = '<option value="">-- กรุณาเลือกรายการแข่งขันก่อน --</option>';
         info.style.display = 'none';
         fashionOnlyBox.style.display = 'none';
         mainRegisterForm.style.display = 'block';
-        teamNameBox.style.display = 'none';
-        teamNameInput.value = '';
+        teamAutoBox.style.display = 'none';
 
         teamNotice.innerHTML =
-          'กรุณาเลือกรายการแข่งขัน ระบบจะแสดงจำนวนช่องกรอกชื่อผู้สมัครตามเงื่อนไขของรายการนั้น';
+          'กรุณาเลือกรายการแข่งขัน ระบบจะแสดงจำนวนผู้สมัครตามเงื่อนไขของรายการนั้น';
 
         renderStudentFields(1);
         updateStudentButtons();
@@ -749,21 +965,14 @@
         info.style.display = 'none';
         fashionOnlyBox.style.display = 'block';
         mainRegisterForm.style.display = 'none';
-        teamNameBox.style.display = 'none';
-        teamNameInput.value = '';
+        teamAutoBox.style.display = 'none';
         hideMessage();
         return;
       }
 
       fashionOnlyBox.style.display = 'none';
       mainRegisterForm.style.display = 'block';
-
-      if (item.categoryType === 'ประเภททีม') {
-        teamNameBox.style.display = 'block';
-      } else {
-        teamNameBox.style.display = 'none';
-        teamNameInput.value = '';
-      }
+      teamAutoBox.style.display = item.categoryType === 'ประเภททีม' ? 'block' : 'none';
 
       levelSelect.innerHTML = '<option value="">-- เลือกระดับการแข่งขัน --</option>';
 
@@ -774,26 +983,24 @@
         levelSelect.appendChild(option);
       });
 
+      if (item.levels.length === 1) {
+        levelSelect.value = item.levels[0];
+        onLevelChange();
+      }
+
       info.style.display = 'block';
       info.innerHTML = `
         <strong>ประเภทการแข่งขัน:</strong> ${item.categoryType}<br>
-        <strong>เงื่อนไข:</strong> ${item.rule}<br>
+        <strong>เงื่อนไขการสมัคร:</strong> ${item.rule}<br>
         <strong>จำนวนผู้สมัคร:</strong> ${
           item.memberMin === item.memberMax
             ? item.memberMax + ' คน'
             : item.memberMin + ' - ' + item.memberMax + ' คน'
-        }<br>
-        <strong>ระดับที่เปิดรับ:</strong> ${item.levels.join(' / ')}
+        }
       `;
 
       teamNotice.innerHTML = `
-        รายการนี้เป็น <strong>${item.categoryType}</strong>
-        ต้องกรอกผู้สมัครจำนวน
-        <strong>${
-          item.memberMin === item.memberMax
-            ? item.memberMax + ' คน'
-            : item.memberMin + ' - ' + item.memberMax + ' คน'
-        }</strong>
+        กรุณากรอกข้อมูลผู้สมัครให้ครบถ้วนตามเงื่อนไขของรายการแข่งขัน
       `;
 
       renderStudentFields(item.memberMin);
@@ -844,7 +1051,7 @@
           type="text"
           class="student-name"
           value="${escapeHtml(value)}"
-          placeholder="ชื่อ-นามสกุล ผู้สมัคร ${currentCount + 1} เช่น นายธนกฤต ใจดี"
+          placeholder="ชื่อ-นามสกุล ผู้สมัคร ${currentCount + 1}"
         />
         <button type="button" class="btn-remove" onclick="removeStudentField(this)">
           ลบ
@@ -875,7 +1082,7 @@
       const inputs = document.querySelectorAll('.student-name');
 
       inputs.forEach((input, index) => {
-        input.placeholder = `ชื่อ-นามสกุล ผู้สมัคร ${index + 1} เช่น นายธนกฤต ใจดี`;
+        input.placeholder = `ชื่อ-นามสกุล ผู้สมัคร ${index + 1}`;
       });
     }
 
@@ -919,6 +1126,131 @@
       return true;
     }
 
+    function showConfirmModal({ title, message, detail, confirmText = 'ยืนยันสมัคร', cancelText = 'กลับไปแก้ไข' }) {
+      return new Promise(resolve => {
+        const modal = document.getElementById('confirmModal');
+        const titleEl = document.getElementById('modalTitle');
+        const messageEl = document.getElementById('modalMessage');
+        const detailEl = document.getElementById('modalDetail');
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        const cancelBtn = document.getElementById('modalCancelBtn');
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        detailEl.innerHTML = detail || '';
+        confirmBtn.textContent = confirmText;
+        cancelBtn.textContent = cancelText;
+
+        modal.classList.add('active');
+
+        const cleanup = () => {
+          modal.classList.remove('active');
+          confirmBtn.onclick = null;
+          cancelBtn.onclick = null;
+        };
+
+        confirmBtn.onclick = () => {
+          cleanup();
+          resolve(true);
+        };
+
+        cancelBtn.onclick = () => {
+          cleanup();
+          resolve(false);
+        };
+      });
+    }
+
+    async function checkExistingTeamBeforeSubmit(item, grade, room) {
+      if (item.categoryType !== 'ประเภททีม') {
+        return {
+          shouldContinue: true,
+          expectedTeamNo: '',
+          expectedTeamName: ''
+        };
+      }
+
+      try {
+        const response = await fetch(API_URL);
+        const result = await response.json();
+
+        if (!result.success) {
+          return {
+            shouldContinue: true,
+            expectedTeamNo: 1,
+            expectedTeamName: 'ทีมที่ 1'
+          };
+        }
+
+        const existingRows = (result.data || []).filter(row => {
+          return row.competition === item.name &&
+            row.grade === grade &&
+            String(row.room) === String(room) &&
+            row.categoryType === 'ประเภททีม';
+        });
+
+        const existingTeamNos = existingRows
+          .map(row => Number(row.teamNo || 0))
+          .filter(no => no > 0);
+
+        const maxTeamNo = existingTeamNos.length > 0
+          ? Math.max(...existingTeamNos)
+          : 0;
+
+        const expectedTeamNo = maxTeamNo + 1;
+        const expectedTeamName = `ทีมที่ ${expectedTeamNo}`;
+
+        if (maxTeamNo > 0) {
+          const confirmed = await showConfirmModal({
+            title: 'ตรวจพบข้อมูลการสมัครเดิม',
+            message: 'มีข้อมูลการสมัครของรายการแข่งขัน ชั้น และห้องเรียนนี้แล้ว',
+            detail: `
+              <strong>รายการแข่งขัน:</strong> ${escapeHtml(item.name)}<br>
+              <strong>ชั้น:</strong> ${escapeHtml(grade)}<br>
+              <strong>ห้อง:</strong> ${escapeHtml(room)}<br>
+              <strong>ลำดับทีมที่จะได้รับ:</strong> ${escapeHtml(expectedTeamName)}
+            `,
+            confirmText: 'ยืนยันสมัคร',
+            cancelText: 'กลับไปแก้ไข'
+          });
+
+          if (!confirmed) {
+            showMessage(
+              'ยกเลิกการบันทึกข้อมูล ท่านสามารถตรวจสอบหรือแก้ไขข้อมูลในแบบฟอร์มเดิมได้',
+              'error'
+            );
+
+            return {
+              shouldContinue: false,
+              expectedTeamNo,
+              expectedTeamName
+            };
+          }
+        }
+
+        return {
+          shouldContinue: true,
+          expectedTeamNo,
+          expectedTeamName
+        };
+
+      } catch (error) {
+        const confirmed = await showConfirmModal({
+          title: 'ยืนยันการบันทึกข้อมูล',
+          message: 'ไม่สามารถตรวจสอบข้อมูลเดิมได้ในขณะนี้ ท่านต้องการดำเนินการสมัครต่อหรือไม่',
+          detail: 'หากยืนยัน ระบบจะบันทึกข้อมูลตามรายการที่กรอกไว้',
+          confirmText: 'ดำเนินการต่อ',
+          cancelText: 'กลับไปแก้ไข'
+        });
+
+        return {
+          shouldContinue: confirmed,
+          expectedTeamNo: '',
+          expectedTeamName: ''
+        };
+      }
+    }
+
     async function submitForm() {
       const item = getSelectedCompetition();
 
@@ -933,16 +1265,13 @@
       }
 
       if (!API_URL || API_URL === 'ใส่ลิงก์ Apps Script Web App ตรงนี้') {
-        showMessage('กรุณาใส่ลิงก์ Apps Script Web App ในตัวแปร API_URL ก่อนใช้งาน', 'error');
+        showMessage('กรุณาตรวจสอบการเชื่อมต่อระบบรับสมัคร', 'error');
         return;
       }
 
       const level = document.getElementById('level').value;
       const grade = document.getElementById('grade').value;
       const room = document.getElementById('room').value;
-      const advisor1 = document.getElementById('advisor1').value.trim();
-      const advisor2 = document.getElementById('advisor2').value.trim();
-      const teamName = document.getElementById('teamName').value.trim();
 
       const studentInputs = Array.from(document.querySelectorAll('.student-name'));
       const studentNames = studentInputs
@@ -965,12 +1294,7 @@
       }
 
       if (!validateGradeWithLevel(grade, level)) {
-        showMessage('ระดับชั้นของผู้สมัครไม่ตรงกับระดับการแข่งขันที่เลือก กรุณาตรวจสอบอีกครั้ง', 'error');
-        return;
-      }
-
-      if (item.categoryType === 'ประเภททีม' && !teamName) {
-        showMessage('กรุณากรอกชื่อทีม', 'error');
+        showMessage('ระดับชั้นของผู้สมัครไม่ตรงกับระดับการแข่งขันที่เลือก', 'error');
         return;
       }
 
@@ -993,27 +1317,6 @@
         return;
       }
 
-      if (!advisor1) {
-        showMessage('กรุณากรอกชื่อ-นามสกุลครูที่ปรึกษา 1', 'error');
-        return;
-      }
-
-      const registerCode = `${item.id}-${level}-${grade}-${room}-${Date.now()}`;
-
-      const payload = {
-        competition: item.name,
-        level: level,
-        categoryType: item.categoryType,
-        rule: item.rule,
-        teamName: item.categoryType === 'ประเภททีม' ? teamName : '',
-        studentNames: studentNames,
-        grade: grade,
-        room: room,
-        advisor1: advisor1,
-        advisor2: advisor2,
-        registerCode: registerCode
-      };
-
       const submitButton = document.getElementById('submitBtn');
       const resetButton = document.getElementById('resetBtn');
       const originalButtonText = submitButton.textContent;
@@ -1021,9 +1324,31 @@
       try {
         submitButton.disabled = true;
         resetButton.disabled = true;
-        submitButton.textContent = 'กำลังบันทึก...';
+        submitButton.textContent = 'กำลังตรวจสอบ...';
 
-        showMessage('กำลังบันทึกข้อมูล กรุณารอสักครู่...', 'success');
+        showMessage('กำลังตรวจสอบข้อมูลการสมัคร...', 'success');
+
+        const checkResult = await checkExistingTeamBeforeSubmit(item, grade, room);
+
+        if (!checkResult.shouldContinue) {
+          return;
+        }
+
+        const registerCode = `${item.id}-${level}-${grade}-${room}-${Date.now()}`;
+
+        const payload = {
+          competition: item.name,
+          level: level,
+          categoryType: item.categoryType,
+          rule: item.rule,
+          studentNames: studentNames,
+          grade: grade,
+          room: room,
+          registerCode: registerCode
+        };
+
+        submitButton.textContent = 'กำลังบันทึก...';
+        showMessage('กำลังบันทึกข้อมูลการสมัคร...', 'success');
 
         const controller = new AbortController();
 
@@ -1049,12 +1374,12 @@
       } catch (error) {
         if (error.name === 'AbortError') {
           showMessage(
-            'ใช้เวลาบันทึกนานเกินไป กรุณาตรวจสอบลิงก์ Apps Script Web App การ Deploy และสิทธิ์การเข้าถึง',
+            'ใช้เวลาบันทึกนานเกินไป กรุณาลองใหม่อีกครั้ง',
             'error'
           );
         } else {
           showMessage(
-            'เกิดข้อผิดพลาดในการเชื่อมต่อ Backend API กรุณาตรวจสอบลิงก์ Apps Script Web App และการ Deploy',
+            'ไม่สามารถบันทึกข้อมูลได้ กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้ง',
             'error'
           );
         }
@@ -1070,19 +1395,16 @@
       document.getElementById('competition').value = '';
       document.getElementById('level').innerHTML =
         '<option value="">-- กรุณาเลือกรายการแข่งขันก่อน --</option>';
-      document.getElementById('grade').value = '';
-      document.getElementById('room').value = '';
-      document.getElementById('advisor1').value = '';
-      document.getElementById('advisor2').value = '';
-      document.getElementById('teamName').value = '';
+      setGradeOptions([]);
+      setRoomOptions([]);
 
       document.getElementById('competitionInfo').style.display = 'none';
       document.getElementById('fashionOnlyBox').style.display = 'none';
       document.getElementById('mainRegisterForm').style.display = 'block';
-      document.getElementById('teamNameBox').style.display = 'none';
+      document.getElementById('teamAutoBox').style.display = 'none';
 
       document.getElementById('teamNotice').innerHTML =
-        'กรุณาเลือกรายการแข่งขัน ระบบจะแสดงจำนวนช่องกรอกชื่อผู้สมัครตามเงื่อนไขของรายการนั้น';
+        'กรุณาเลือกรายการแข่งขัน ระบบจะแสดงจำนวนผู้สมัครตามเงื่อนไขของรายการนั้น';
 
       renderStudentFields(1);
       updateStudentButtons();
@@ -1115,7 +1437,7 @@
 
       if (!API_URL || API_URL === 'ใส่ลิงก์ Apps Script Web App ตรงนี้') {
         report.innerHTML =
-          '<div class="message error" style="display:block;">กรุณาใส่ลิงก์ Apps Script Web App ในตัวแปร API_URL ก่อนใช้งาน</div>';
+          '<div class="message error" style="display:block;">ไม่สามารถเชื่อมต่อข้อมูลรายงานได้</div>';
         return;
       }
 
@@ -1144,11 +1466,27 @@
           filteredData = filteredData.filter(item => item.level === selectedLevel);
         }
 
+        filteredData.sort((a, b) => {
+          const competitionCompare = String(a.competition || '').localeCompare(String(b.competition || ''), 'th');
+          if (competitionCompare !== 0) return competitionCompare;
+
+          const gradeCompare = String(a.grade || '').localeCompare(String(b.grade || ''), 'th');
+          if (gradeCompare !== 0) return gradeCompare;
+
+          const roomCompare = Number(a.room || 0) - Number(b.room || 0);
+          if (roomCompare !== 0) return roomCompare;
+
+          const teamCompare = Number(a.teamNo || 0) - Number(b.teamNo || 0);
+          if (teamCompare !== 0) return teamCompare;
+
+          return Number(a.memberNo || 0) - Number(b.memberNo || 0);
+        });
+
         renderAdminReport(filteredData, selectedCompetition, selectedLevel);
 
       } catch (error) {
         report.innerHTML =
-          '<div class="message error" style="display:block;">ไม่สามารถโหลดรายงานได้ กรุณาตรวจสอบการ Deploy Apps Script</div>';
+          '<div class="message error" style="display:block;">ไม่สามารถโหลดรายงานได้ กรุณาลองใหม่อีกครั้ง</div>';
       }
     }
 
@@ -1168,6 +1506,7 @@
 
       const totalTeams = new Set(
         data
+          .filter(item => item.categoryType === 'ประเภททีม')
           .map(item => item.registerCode)
           .filter(code => code && String(code).trim() !== '')
       ).size;
@@ -1178,19 +1517,14 @@
           .filter(item => item && String(item).trim() !== '')
       ).size;
 
-      let conditionText = '';
-
-      if (selectedCompetition) {
-        conditionText += `<strong>รายการแข่งขัน:</strong> ${escapeHtml(selectedCompetition)}<br>`;
-      } else {
-        conditionText += `<strong>รายการแข่งขัน:</strong> ทุกรายการแข่งขัน<br>`;
-      }
-
-      if (selectedLevel) {
-        conditionText += `<strong>ระดับ:</strong> ${escapeHtml(selectedLevel)}`;
-      } else {
-        conditionText += `<strong>ระดับ:</strong> ทุกระดับ`;
-      }
+      const conditionText = `
+        <strong>รายการแข่งขัน:</strong> ${
+          selectedCompetition ? escapeHtml(selectedCompetition) : 'ทุกรายการแข่งขัน'
+        }<br>
+        <strong>ระดับ:</strong> ${
+          selectedLevel ? escapeHtml(selectedLevel) : 'ทุกระดับ'
+        }
+      `;
 
       let html = `
         <div class="info-box">
@@ -1204,7 +1538,7 @@
           </div>
           <div class="summary-card">
             <strong>${totalTeams}</strong>
-            จำนวนทีม/รายการสมัคร
+            จำนวนทีม
           </div>
           <div class="summary-card">
             <strong>${totalCompetitions}</strong>
