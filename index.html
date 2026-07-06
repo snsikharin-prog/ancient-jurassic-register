@@ -246,6 +246,31 @@
       color: #475569;
     }
 
+
+    .evidence-card {
+      background: linear-gradient(135deg, rgba(240,253,250,0.9), rgba(239,246,255,0.9));
+      border: 1px solid rgba(203,213,225,0.9);
+      border-radius: 24px;
+      padding: 18px;
+      margin-top: 12px;
+    }
+
+    .evidence-hint {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .evidence-status {
+      margin-top: 14px;
+      display: none;
+    }
+
+    .evidence-status.active {
+      display: block;
+    }
+
     .student-toolbar {
       margin-top: 12px;
       margin-bottom: 12px;
@@ -765,9 +790,83 @@
       <div id="message" class="message"></div>
     </div>
 
+
     <div class="card">
       <div class="card-title">
-        <h2>รายงานผลการสมัครสำหรับผู้ดูแลระบบ</h2>
+        <h2>ส่งหลักฐานการแข่งขัน</h2>
+      </div>
+
+      <div class="evidence-card">
+        <h3 style="margin-top:0;">การแข่งขันเรือมอเตอร์ (ประเภทความเร็ว)</h3>
+        <p class="evidence-hint">
+          สำหรับผู้สมัครที่มีข้อมูลในระบบแล้ว กรุณาเลือกรายชื่อผู้สมัครและแนบลิงก์หลักฐานการแข่งขัน
+        </p>
+
+        <div class="report-toolbar">
+          <button class="btn-secondary" id="loadEvidenceBtn" type="button" onclick="loadMotorBoatEvidenceOptions()">
+            โหลดข้อมูลผู้สมัครเรือมอเตอร์
+          </button>
+          <button class="btn-light" type="button" onclick="clearEvidenceForm()">
+            ล้างข้อมูลหลักฐาน
+          </button>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label for="evidenceGrade">ชั้น</label>
+            <select id="evidenceGrade" onchange="onEvidenceGradeChange()">
+              <option value="">-- กรุณาโหลดข้อมูลผู้สมัครก่อน --</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="evidenceRoom">ห้อง</label>
+            <select id="evidenceRoom" onchange="onEvidenceRoomChange()">
+              <option value="">-- กรุณาเลือกชั้นก่อน --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label for="evidenceTeam">ทีม</label>
+            <select id="evidenceTeam" onchange="onEvidenceTeamChange()">
+              <option value="">-- กรุณาเลือกห้องก่อน --</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="evidenceStudent">ชื่อ-นามสกุล (ตัวแทน)</label>
+            <select id="evidenceStudent">
+              <option value="">-- กรุณาเลือกทีมก่อน --</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="evidenceLink">ลิงก์หลักฐานการแข่งขัน</label>
+        <input
+          type="url"
+          id="evidenceLink"
+          placeholder="เช่น https://drive.google.com/..."
+        />
+
+        <p class="evidence-hint">
+          โปรดตรวจสอบสิทธิ์การเข้าถึงลิงก์ให้ผู้เกี่ยวข้องสามารถเปิดดูหลักฐานได้
+        </p>
+
+        <div class="actions">
+          <button class="btn-primary" id="evidenceSubmitBtn" type="button" onclick="submitMotorBoatEvidence()">
+            บันทึกลิงก์หลักฐาน
+          </button>
+        </div>
+
+        <div id="evidenceInfo" class="evidence-status info-box"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <h2>รายงานผลการสมัคร</h2>
       </div>
 
       <div class="grid">
@@ -824,6 +923,10 @@
     const SCHOOL_LOGO_URL = 'https://lh3.googleusercontent.com/d/18pdbdUQk06D4LihDnzOFREHbEODTd9PX';
 
     const FASHION_LINK = 'https://snsikharin-prog.github.io/lka-recycled-costum/';
+
+    const MOTOR_BOAT_COMPETITION_NAME = 'การแข่งขันเรือมอเตอร์ (ประเภทความเร็ว) ประดิษฐ์มาพร้อมแข่ง ขนาดความยาวไม่เกิน 30 เซนติเมตร';
+
+    let motorBoatEvidenceRows = [];
 
     const competitions = [
       {
@@ -959,6 +1062,7 @@
 
       setGradeOptions([]);
       setRoomOptions([]);
+      resetEvidenceForm();
       renderStudentFields(1);
       updateStudentButtons();
     }
@@ -1634,6 +1738,357 @@
       if (message) {
         message.textContent = '';
         message.style.display = 'none';
+      }
+    }
+
+
+    function resetEvidenceForm() {
+      motorBoatEvidenceRows = [];
+      setEvidenceSelectOptions('evidenceGrade', [], '-- กรุณาโหลดข้อมูลผู้สมัครก่อน --');
+      setEvidenceSelectOptions('evidenceRoom', [], '-- กรุณาเลือกชั้นก่อน --');
+      setEvidenceSelectOptions('evidenceTeam', [], '-- กรุณาเลือกห้องก่อน --');
+      setEvidenceSelectOptions('evidenceStudent', [], '-- กรุณาเลือกทีมก่อน --');
+
+      const evidenceLink = document.getElementById('evidenceLink');
+      const evidenceInfo = document.getElementById('evidenceInfo');
+
+      if (evidenceLink) evidenceLink.value = '';
+      if (evidenceInfo) {
+        evidenceInfo.classList.remove('active');
+        evidenceInfo.innerHTML = '';
+      }
+    }
+
+    function clearEvidenceForm() {
+      resetEvidenceForm();
+      showMessage('ล้างข้อมูลส่วนส่งหลักฐานแล้ว', 'info');
+    }
+
+    function setEvidenceSelectOptions(selectId, items, placeholder, valueGetter = item => item, textGetter = item => item) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+
+      select.innerHTML = '';
+
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = placeholder;
+      select.appendChild(defaultOption);
+
+      items.forEach(item => {
+        const option = document.createElement('option');
+        option.value = String(valueGetter(item));
+        option.textContent = String(textGetter(item));
+        select.appendChild(option);
+      });
+    }
+
+    function getGradeOrder(grade) {
+      const order = {
+        'ม.1': 1,
+        'ม.2': 2,
+        'ม.3': 3,
+        'ม.4': 4,
+        'ม.5': 5,
+        'ม.6': 6
+      };
+
+      return order[grade] || 99;
+    }
+
+    function uniqueSorted(values, sorter) {
+      const unique = Array.from(new Set(values.filter(value => value !== undefined && value !== null && String(value).trim() !== '')));
+      return sorter ? unique.sort(sorter) : unique.sort((a, b) => String(a).localeCompare(String(b), 'th'));
+    }
+
+    function isMotorBoatRegistration(row) {
+      return row &&
+        (
+          row.competition === MOTOR_BOAT_COMPETITION_NAME ||
+          String(row.competition || '').includes('การแข่งขันเรือมอเตอร์')
+        );
+    }
+
+    function getEvidenceRowKey(row) {
+      return [
+        encodeURIComponent(String(row.registerCode || '')),
+        encodeURIComponent(String(row.memberNo || '')),
+        encodeURIComponent(String(row.studentName || ''))
+      ].join('|');
+    }
+
+    async function loadMotorBoatEvidenceOptions() {
+      const loadButton = document.getElementById('loadEvidenceBtn');
+      const originalText = loadButton ? loadButton.textContent : '';
+
+      if (!API_URL || API_URL === 'ใส่ลิงก์ Apps Script Web App ตรงนี้') {
+        showMessage('ไม่สามารถเชื่อมต่อข้อมูลผู้สมัครได้', 'error');
+        return;
+      }
+
+      try {
+        if (loadButton) {
+          loadButton.disabled = true;
+          loadButton.textContent = 'กำลังโหลดข้อมูล...';
+        }
+
+        showMessage('กำลังโหลดข้อมูลผู้สมัครเรือมอเตอร์...', 'info');
+
+        const response = await fetch(API_URL);
+        const result = await response.json();
+
+        if (!result.success) {
+          showMessage(result.message || 'ไม่สามารถโหลดข้อมูลผู้สมัครได้', 'error');
+          return;
+        }
+
+        motorBoatEvidenceRows = (result.data || [])
+          .filter(isMotorBoatRegistration)
+          .filter(row => row.studentName && row.grade && row.room)
+          .sort((a, b) => {
+            const gradeCompare = getGradeOrder(a.grade) - getGradeOrder(b.grade);
+            if (gradeCompare !== 0) return gradeCompare;
+
+            const roomCompare = Number(a.room || 0) - Number(b.room || 0);
+            if (roomCompare !== 0) return roomCompare;
+
+            const teamCompare = Number(a.teamNo || 0) - Number(b.teamNo || 0);
+            if (teamCompare !== 0) return teamCompare;
+
+            return Number(a.memberNo || 0) - Number(b.memberNo || 0);
+          });
+
+        if (motorBoatEvidenceRows.length === 0) {
+          resetEvidenceForm();
+          showMessage('ยังไม่พบข้อมูลผู้สมัครรายการแข่งขันเรือมอเตอร์', 'warning');
+          return;
+        }
+
+        const grades = uniqueSorted(
+          motorBoatEvidenceRows.map(row => row.grade),
+          (a, b) => getGradeOrder(a) - getGradeOrder(b)
+        );
+
+        setEvidenceSelectOptions('evidenceGrade', grades, '-- เลือกชั้น --');
+
+        const evidenceInfo = document.getElementById('evidenceInfo');
+        evidenceInfo.classList.add('active');
+        evidenceInfo.innerHTML = `
+          พบข้อมูลผู้สมัครการแข่งขันเรือมอเตอร์จำนวน <strong>${motorBoatEvidenceRows.length}</strong> รายการ
+          กรุณาเลือกชั้น ห้อง ทีม และชื่อผู้สมัครเพื่อส่งลิงก์หลักฐาน
+        `;
+
+        showMessage('โหลดข้อมูลผู้สมัครเรือมอเตอร์เรียบร้อยแล้ว', 'success');
+
+      } catch (error) {
+        showMessage('ไม่สามารถโหลดข้อมูลผู้สมัครได้ กรุณาลองใหม่อีกครั้ง', 'error');
+
+      } finally {
+        if (loadButton) {
+          loadButton.disabled = false;
+          loadButton.textContent = originalText;
+        }
+      }
+    }
+
+    function onEvidenceGradeChange() {
+      const grade = document.getElementById('evidenceGrade').value;
+
+      setEvidenceSelectOptions('evidenceRoom', [], '-- กรุณาเลือกชั้นก่อน --');
+      setEvidenceSelectOptions('evidenceTeam', [], '-- กรุณาเลือกห้องก่อน --');
+      setEvidenceSelectOptions('evidenceStudent', [], '-- กรุณาเลือกทีมก่อน --');
+
+      if (!grade) return;
+
+      const rooms = uniqueSorted(
+        motorBoatEvidenceRows
+          .filter(row => row.grade === grade)
+          .map(row => String(row.room)),
+        (a, b) => Number(a) - Number(b)
+      );
+
+      setEvidenceSelectOptions(
+        'evidenceRoom',
+        rooms,
+        '-- เลือกห้อง --',
+        room => room,
+        room => `ห้อง ${room}`
+      );
+    }
+
+    function onEvidenceRoomChange() {
+      const grade = document.getElementById('evidenceGrade').value;
+      const room = document.getElementById('evidenceRoom').value;
+
+      setEvidenceSelectOptions('evidenceTeam', [], '-- กรุณาเลือกห้องก่อน --');
+      setEvidenceSelectOptions('evidenceStudent', [], '-- กรุณาเลือกทีมก่อน --');
+
+      if (!grade || !room) return;
+
+      const teamMap = new Map();
+
+      motorBoatEvidenceRows
+        .filter(row => row.grade === grade && String(row.room) === String(room))
+        .forEach(row => {
+          const key = row.registerCode || `${row.grade}-${row.room}-${row.teamNo || row.teamName || 'team'}`;
+          if (!teamMap.has(key)) {
+            teamMap.set(key, {
+              registerCode: key,
+              teamName: row.teamName || 'ไม่ระบุทีม',
+              teamNo: row.teamNo || '',
+              grade: row.grade,
+              room: row.room
+            });
+          }
+        });
+
+      const teams = Array.from(teamMap.values()).sort((a, b) => Number(a.teamNo || 0) - Number(b.teamNo || 0));
+
+      setEvidenceSelectOptions(
+        'evidenceTeam',
+        teams,
+        '-- เลือกทีม --',
+        team => team.registerCode,
+        team => team.teamName
+      );
+    }
+
+    function onEvidenceTeamChange() {
+      const grade = document.getElementById('evidenceGrade').value;
+      const room = document.getElementById('evidenceRoom').value;
+      const registerCode = document.getElementById('evidenceTeam').value;
+
+      setEvidenceSelectOptions('evidenceStudent', [], '-- กรุณาเลือกทีมก่อน --');
+
+      if (!grade || !room || !registerCode) return;
+
+      const students = motorBoatEvidenceRows
+        .filter(row => {
+          const rowTeamKey = row.registerCode || `${row.grade}-${row.room}-${row.teamNo || row.teamName || 'team'}`;
+          return row.grade === grade &&
+            String(row.room) === String(room) &&
+            rowTeamKey === registerCode;
+        })
+        .sort((a, b) => Number(a.memberNo || 0) - Number(b.memberNo || 0));
+
+      setEvidenceSelectOptions(
+        'evidenceStudent',
+        students,
+        '-- เลือกชื่อ-นามสกุล --',
+        row => getEvidenceRowKey(row),
+        row => `${row.memberNo ? row.memberNo + '. ' : ''}${row.studentName}`
+      );
+    }
+
+    function getSelectedEvidenceRow() {
+      const key = document.getElementById('evidenceStudent').value;
+      if (!key) return null;
+
+      return motorBoatEvidenceRows.find(row => getEvidenceRowKey(row) === key) || null;
+    }
+
+    function isValidEvidenceLink(link) {
+      return /^https?:\/\/.+/i.test(link);
+    }
+
+    async function submitMotorBoatEvidence() {
+      const submitButton = document.getElementById('evidenceSubmitBtn');
+      const originalText = submitButton ? submitButton.textContent : '';
+      const selectedRow = getSelectedEvidenceRow();
+      const evidenceLink = document.getElementById('evidenceLink').value.trim();
+
+      if (!selectedRow) {
+        showMessage('กรุณาเลือกข้อมูลผู้สมัครสำหรับส่งหลักฐาน', 'error');
+        return;
+      }
+
+      if (!evidenceLink) {
+        showMessage('กรุณากรอกลิงก์หลักฐานการแข่งขัน', 'error');
+        return;
+      }
+
+      if (!isValidEvidenceLink(evidenceLink)) {
+        showMessage('กรุณากรอกลิงก์ให้ถูกต้อง โดยขึ้นต้นด้วย http:// หรือ https://', 'error');
+        return;
+      }
+
+      const confirmed = await showConfirmModal({
+        title: 'ยืนยันการส่งหลักฐาน',
+        message: 'กรุณาตรวจสอบข้อมูลก่อนบันทึกลิงก์หลักฐานการแข่งขัน',
+        detail: `
+          <strong>รายการแข่งขัน:</strong> ${escapeHtml(selectedRow.competition || MOTOR_BOAT_COMPETITION_NAME)}<br>
+          <strong>ชั้น/ห้อง:</strong> ${escapeHtml(selectedRow.grade || '-')} / ${escapeHtml(selectedRow.room || '-')}<br>
+          <strong>ทีม:</strong> ${escapeHtml(selectedRow.teamName || '-')}<br>
+          <strong>ชื่อ-นามสกุล:</strong> ${escapeHtml(selectedRow.studentName || '-')}<br>
+          <strong>ลิงก์หลักฐาน:</strong> ${escapeHtml(evidenceLink)}
+        `,
+        confirmText: 'บันทึกหลักฐาน',
+        cancelText: 'กลับไปแก้ไข',
+        icon: 'i'
+      });
+
+      if (!confirmed) {
+        showMessage('ยกเลิกการบันทึกลิงก์หลักฐานแล้ว', 'warning');
+        return;
+      }
+
+      if (!API_URL || API_URL === 'ใส่ลิงก์ Apps Script Web App ตรงนี้') {
+        showMessage('ไม่สามารถเชื่อมต่อระบบบันทึกหลักฐานได้', 'error');
+        return;
+      }
+
+      const payload = {
+        action: 'submitEvidence',
+        competition: selectedRow.competition || MOTOR_BOAT_COMPETITION_NAME,
+        level: selectedRow.level || '',
+        grade: selectedRow.grade || '',
+        room: selectedRow.room || '',
+        teamName: selectedRow.teamName || '',
+        teamNo: selectedRow.teamNo || '',
+        studentName: selectedRow.studentName || '',
+        memberNo: selectedRow.memberNo || '',
+        registerCode: selectedRow.registerCode || '',
+        evidenceLink: evidenceLink
+      };
+
+      try {
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = 'กำลังบันทึก...';
+        }
+
+        showMessage('กำลังบันทึกลิงก์หลักฐานการแข่งขัน...', 'info');
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        document.getElementById('evidenceLink').value = '';
+        showMessage('บันทึกลิงก์หลักฐานการแข่งขันเรียบร้อยแล้ว', 'success');
+
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          showMessage('ใช้เวลาบันทึกนานเกินไป กรุณาลองใหม่อีกครั้ง', 'error');
+        } else {
+          showMessage('ไม่สามารถบันทึกลิงก์หลักฐานได้ กรุณาลองใหม่อีกครั้ง', 'error');
+        }
+
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
+        }
       }
     }
 
