@@ -513,6 +513,113 @@
       min-width: 120px;
     }
 
+
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: grid;
+      gap: 12px;
+      z-index: 10000;
+      width: min(380px, calc(100vw - 32px));
+      pointer-events: none;
+    }
+
+    .toast-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 14px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.98);
+      border: 1px solid rgba(226,232,240,0.95);
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18);
+      animation: toastIn 0.22s ease-out;
+      pointer-events: auto;
+    }
+
+    .toast-card.removing {
+      animation: toastOut 0.18s ease-in forwards;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+      }
+    }
+
+    .toast-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: white;
+      flex: none;
+    }
+
+    .toast-card.success .toast-icon {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+    }
+
+    .toast-card.error .toast-icon {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+    }
+
+    .toast-card.warning .toast-icon {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+    }
+
+    .toast-card.info .toast-icon {
+      background: linear-gradient(135deg, var(--secondary), #1d4ed8);
+    }
+
+    .toast-content strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #0f172a;
+      font-size: 15px;
+    }
+
+    .toast-content span {
+      display: block;
+      color: #475569;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .toast-close {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      padding: 0;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #334155;
+      box-shadow: none;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .toast-close:hover {
+      transform: none;
+      background: #e2e8f0;
+    }
+
     @media (max-width: 760px) {
       .container {
         padding: 16px;
@@ -696,6 +803,8 @@
     </div>
   </div>
 
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
   <div id="confirmModal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-icon">!</div>
@@ -775,7 +884,7 @@
         id: 'bottle-garden',
         name: 'การแข่งขันจัดสวนขวด ( “ย้อนรอยดึกดำบรรพ์” )',
         categoryType: 'ประเภททีม',
-        rule: 'ทีมละ 2 คน ส่งอย่างน้อยห้องละ 1 ทีม',
+        rule: 'ทีมละ 2 คน จำกัดสมัครได้ชั้น/ห้องละ 1 ทีม',
         memberMin: 2,
         memberMax: 2,
         levels: ['ระดับ ม.ปลาย (ม.4 – 6)']
@@ -1126,20 +1235,23 @@
       return true;
     }
 
-    function showConfirmModal({ title, message, detail, confirmText = 'ยืนยันสมัคร', cancelText = 'กลับไปแก้ไข' }) {
+    function showConfirmModal({ title, message, detail, confirmText = 'ยืนยันสมัคร', cancelText = 'กลับไปแก้ไข', icon = '!' }) {
       return new Promise(resolve => {
         const modal = document.getElementById('confirmModal');
         const titleEl = document.getElementById('modalTitle');
         const messageEl = document.getElementById('modalMessage');
         const detailEl = document.getElementById('modalDetail');
+        const iconEl = modal.querySelector('.modal-icon');
         const confirmBtn = document.getElementById('modalConfirmBtn');
         const cancelBtn = document.getElementById('modalCancelBtn');
 
         titleEl.textContent = title;
         messageEl.textContent = message;
         detailEl.innerHTML = detail || '';
+        iconEl.textContent = icon;
         confirmBtn.textContent = confirmText;
         cancelBtn.textContent = cancelText;
+        cancelBtn.style.display = 'inline-block';
 
         modal.classList.add('active');
 
@@ -1159,6 +1271,81 @@
           resolve(false);
         };
       });
+    }
+
+    function showAlertModal({ title, message, detail = '', buttonText = 'รับทราบ', icon = '!' }) {
+      return new Promise(resolve => {
+        const modal = document.getElementById('confirmModal');
+        const titleEl = document.getElementById('modalTitle');
+        const messageEl = document.getElementById('modalMessage');
+        const detailEl = document.getElementById('modalDetail');
+        const iconEl = modal.querySelector('.modal-icon');
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        const cancelBtn = document.getElementById('modalCancelBtn');
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        detailEl.innerHTML = detail || '';
+        iconEl.textContent = icon;
+        confirmBtn.textContent = buttonText;
+        cancelBtn.style.display = 'none';
+
+        modal.classList.add('active');
+
+        const cleanup = () => {
+          modal.classList.remove('active');
+          confirmBtn.onclick = null;
+          cancelBtn.onclick = null;
+          cancelBtn.style.display = 'inline-block';
+        };
+
+        confirmBtn.onclick = () => {
+          cleanup();
+          resolve(true);
+        };
+      });
+    }
+
+    function showToast(text, type = 'info', title = '') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const normalizedType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+      const toast = document.createElement('div');
+      toast.className = `toast-card ${normalizedType}`;
+
+      const iconMap = {
+        success: '✓',
+        error: '!',
+        warning: '!',
+        info: 'i'
+      };
+
+      const titleMap = {
+        success: 'ดำเนินการสำเร็จ',
+        error: 'แจ้งเตือน',
+        warning: 'โปรดตรวจสอบ',
+        info: 'สถานะการดำเนินการ'
+      };
+
+      toast.innerHTML = `
+        <div class="toast-icon">${iconMap[normalizedType]}</div>
+        <div class="toast-content">
+          <strong>${escapeHtml(title || titleMap[normalizedType])}</strong>
+          <span>${escapeHtml(text)}</span>
+        </div>
+        <button class="toast-close" type="button" aria-label="ปิด">×</button>
+      `;
+
+      const closeToast = () => {
+        toast.classList.add('removing');
+        setTimeout(() => toast.remove(), 200);
+      };
+
+      toast.querySelector('.toast-close').onclick = closeToast;
+      container.appendChild(toast);
+
+      setTimeout(closeToast, normalizedType === 'error' ? 5200 : 3600);
     }
 
     async function checkExistingTeamBeforeSubmit(item, grade, room) {
@@ -1200,6 +1387,27 @@
         const expectedTeamNo = maxTeamNo + 1;
         const expectedTeamName = `ทีมที่ ${expectedTeamNo}`;
 
+        if (item.id === 'bottle-garden' && maxTeamNo > 0) {
+          await showAlertModal({
+            title: 'ไม่สามารถสมัครซ้ำได้',
+            message: 'รายการแข่งขันจัดสวนขวดจำกัดการสมัครเพียงชั้น/ห้องละ 1 ทีมเท่านั้น',
+            detail: `
+              <strong>รายการแข่งขัน:</strong> ${escapeHtml(item.name)}<br>
+              <strong>ชั้น:</strong> ${escapeHtml(grade)}<br>
+              <strong>ห้อง:</strong> ${escapeHtml(room)}<br>
+              <strong>สถานะ:</strong> พบข้อมูลการสมัครแล้ว
+            `,
+            buttonText: 'กลับไปตรวจสอบข้อมูล',
+            icon: '!'
+          });
+
+          return {
+            shouldContinue: false,
+            expectedTeamNo,
+            expectedTeamName
+          };
+        }
+
         if (maxTeamNo > 0) {
           const confirmed = await showConfirmModal({
             title: 'ตรวจพบข้อมูลการสมัครเดิม',
@@ -1211,13 +1419,14 @@
               <strong>ลำดับทีมที่จะได้รับ:</strong> ${escapeHtml(expectedTeamName)}
             `,
             confirmText: 'ยืนยันสมัคร',
-            cancelText: 'กลับไปแก้ไข'
+            cancelText: 'กลับไปแก้ไข',
+            icon: '!'
           });
 
           if (!confirmed) {
             showMessage(
               'ยกเลิกการบันทึกข้อมูล ท่านสามารถตรวจสอบหรือแก้ไขข้อมูลในแบบฟอร์มเดิมได้',
-              'error'
+              'warning'
             );
 
             return {
@@ -1240,7 +1449,8 @@
           message: 'ไม่สามารถตรวจสอบข้อมูลเดิมได้ในขณะนี้ ท่านต้องการดำเนินการสมัครต่อหรือไม่',
           detail: 'หากยืนยัน ระบบจะบันทึกข้อมูลตามรายการที่กรอกไว้',
           confirmText: 'ดำเนินการต่อ',
-          cancelText: 'กลับไปแก้ไข'
+          cancelText: 'กลับไปแก้ไข',
+          icon: '!'
         });
 
         return {
@@ -1337,6 +1547,7 @@
         const registerCode = `${item.id}-${level}-${grade}-${room}-${Date.now()}`;
 
         const payload = {
+          competitionId: item.id,
           competition: item.name,
           level: level,
           categoryType: item.categoryType,
@@ -1415,29 +1626,23 @@
     }
 
     function showMessage(text, type) {
-      const message = document.getElementById('message');
-      message.textContent = text;
-      message.className = `message ${type}`;
-      message.style.display = 'block';
-
-      message.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest'
-      });
+      showToast(text, type || 'info');
     }
 
     function hideMessage() {
       const message = document.getElementById('message');
-      message.textContent = '';
-      message.style.display = 'none';
+      if (message) {
+        message.textContent = '';
+        message.style.display = 'none';
+      }
     }
 
     async function loadAdminReport() {
       const report = document.getElementById('report');
 
       if (!API_URL || API_URL === 'ใส่ลิงก์ Apps Script Web App ตรงนี้') {
-        report.innerHTML =
-          '<div class="message error" style="display:block;">ไม่สามารถเชื่อมต่อข้อมูลรายงานได้</div>';
+        report.innerHTML = '';
+        showMessage('ไม่สามารถเชื่อมต่อข้อมูลรายงานได้', 'error');
         return;
       }
 
@@ -1451,8 +1656,8 @@
         const result = await response.json();
 
         if (!result.success) {
-          report.innerHTML =
-            `<div class="message error" style="display:block;">${escapeHtml(result.message)}</div>`;
+          report.innerHTML = '';
+          showMessage(result.message || 'ไม่สามารถโหลดข้อมูลรายงานได้', 'error');
           return;
         }
 
@@ -1485,8 +1690,8 @@
         renderAdminReport(filteredData, selectedCompetition, selectedLevel);
 
       } catch (error) {
-        report.innerHTML =
-          '<div class="message error" style="display:block;">ไม่สามารถโหลดรายงานได้ กรุณาลองใหม่อีกครั้ง</div>';
+        report.innerHTML = '';
+        showMessage('ไม่สามารถโหลดรายงานได้ กรุณาลองใหม่อีกครั้ง', 'error');
       }
     }
 
@@ -1494,11 +1699,8 @@
       const report = document.getElementById('report');
 
       if (!data || data.length === 0) {
-        report.innerHTML = `
-          <div class="message error" style="display:block;">
-            ไม่พบข้อมูลการสมัครตามเงื่อนไขที่เลือก
-          </div>
-        `;
+        report.innerHTML = '';
+        showMessage('ไม่พบข้อมูลการสมัครตามเงื่อนไขที่เลือก', 'warning');
         return;
       }
 
