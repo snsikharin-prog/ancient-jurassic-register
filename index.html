@@ -516,6 +516,30 @@
       white-space: pre-line;
     }
 
+    .startup-warning-message {
+      color: #dc2626 !important;
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 900;
+      line-height: 1.55 !important;
+      text-align: center;
+    }
+
+    .startup-warning-card {
+      width: min(760px, 100%);
+      border: 3px solid #ef4444;
+    }
+
+    .startup-warning-card .modal-icon {
+      margin-left: auto;
+      margin-right: auto;
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .startup-warning-card .modal-actions {
+      justify-content: center;
+    }
+
     .modal-detail {
       margin-top: 14px;
       padding: 14px;
@@ -1282,6 +1306,7 @@
       resetEvidenceForm();
       renderStudentFields(1);
       updateStudentButtons();
+      showStartupWarning();
     }
 
     function setupLogo() {
@@ -1628,6 +1653,39 @@
           resolve(true);
         };
       });
+    }
+
+    function showStartupWarning() {
+      const modal = document.getElementById('confirmModal');
+      const modalCard = modal.querySelector('.modal-card');
+      const titleEl = document.getElementById('modalTitle');
+      const messageEl = document.getElementById('modalMessage');
+      const detailEl = document.getElementById('modalDetail');
+      const iconEl = modal.querySelector('.modal-icon');
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      const cancelBtn = document.getElementById('modalCancelBtn');
+
+      modalCard.classList.add('startup-warning-card');
+      messageEl.classList.add('startup-warning-message');
+
+      titleEl.textContent = 'แจ้งเตือนก่อนสมัคร';
+      messageEl.textContent = 'กรุณาตรวจสอบรายชื่อ ในส่วน "รายงานผลการสมัคร"ก่อนทุกครั้ง (ส่วนท้าย) เพื่อป้องกันการสมัครซ้ำ';
+      detailEl.style.display = 'none';
+      detailEl.innerHTML = '';
+      iconEl.textContent = '!';
+      confirmBtn.textContent = 'ตกลง';
+      cancelBtn.style.display = 'none';
+
+      modal.classList.add('active');
+
+      confirmBtn.onclick = () => {
+        modal.classList.remove('active');
+        modalCard.classList.remove('startup-warning-card');
+        messageEl.classList.remove('startup-warning-message');
+        detailEl.style.display = '';
+        cancelBtn.style.display = 'inline-block';
+        confirmBtn.onclick = null;
+      };
     }
 
     function showToast(text, type = 'info', title = '') {
